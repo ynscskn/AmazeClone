@@ -21,6 +21,6 @@ public class MenuButton : MonoBehaviour
     }
     void ButtonClicked()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        M_Observer.OnGameMainMenu?.Invoke();
     }
 }

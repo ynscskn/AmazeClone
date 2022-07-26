@@ -36,6 +36,7 @@ public class M_Observer : MonoBehaviour
         OnGamePause += GamePause;
         OnGameMainMenu += GameMainMenu;
 
+        OnPieceSpawn += PieceSpawn;
     }
 
     private void Start()
@@ -56,11 +57,18 @@ public class M_Observer : MonoBehaviour
         OnGamePause -= GamePause;
         OnGameMainMenu -= GameMainMenu;
 
+        OnPieceSpawn -= PieceSpawn;
+
     }
 
     private void GameMainMenu()
     {
         //print("GameMenu");
+    }
+
+    private void PieceSpawn()
+    {
+        //print("PieceSpawn");
     }
 
     private void GameCreate()
