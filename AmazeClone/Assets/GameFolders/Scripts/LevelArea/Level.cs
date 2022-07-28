@@ -1,6 +1,4 @@
 using DG.Tweening;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,14 +43,20 @@ public class Level : MonoBehaviour
 
     private void GameCreate()
     {
-        print("GameCreate"); CreateGrid();
+        CreateGrid();
+        M_Level.I.CurrentBall.transform.SetParent(GridItemArray[1, 1].transform);
+        CurrentBall = M_Level.I.CurrentBall;
+        GridSetting(CurrentBall, 30);
+        CurrentBall.Index_I = 1;
+        CurrentBall.Index_J = 1;
+        CurrentBall.transform.localScale = new Vector3(1, 10, 1);
     }
     Ball CurrentBall;
     private void GameStart()
     {
-        print("GameStart"); M_Level.I.CurrentBall.transform.SetParent(GridItemArray[1, 1].transform); CurrentBall = M_Level.I.CurrentBall;
-
+        // print("GameStart"); M_Level.I.CurrentBall.transform.SetParent(GridItemArray[1, 1].transform); CurrentBall = M_Level.I.CurrentBall;
     }
+
     private void GameReady()
     {
         print("GameReady");
@@ -81,7 +85,6 @@ public class Level : MonoBehaviour
     {
         print("GameNextLevel");
     }
-
 
     void OnEnable()
     {
@@ -220,24 +223,213 @@ public class Level : MonoBehaviour
             {
                 GridItem gridItem = Instantiate(M_Level.I.GridItemPrefab, transform);
                 gridItem.transform.localPosition = new Vector3(i, 0, j);
-                gridItem.transform.localScale = new Vector3(1, 0.1f, 1);
+
+                //*****
                 gridItem.Grid_I = i;
                 gridItem.Grid_J = j;
-                gridItem.IsWall = false;
-                gridItem.IsRoad = true;
-                gridItem.transform.tag = "Road";
+                gridItem.IsWall = true;
+                gridItem.IsRoad = false;
+                gridItem.transform.tag = "Wall";
+                gridItem.transform.localScale = new Vector3(1, 0.5f, 1);
+                gridItem.GetComponent<MeshRenderer>().material = M_Level.I.WallMat;
                 GridItemArray[i, j] = gridItem;
+                //****
 
-                if (i == 0 || i == 9 || j == 0 || j == 9)
-                {
-                    gridItem.IsWall = true;
-                    gridItem.IsRoad = false;
-                    gridItem.transform.tag = "Wall";
-                    gridItem.transform.localScale = new Vector3(1, 0.5f, 1);
-                    gridItem.GetComponent<MeshRenderer>().material = M_Level.I.WallMat;
-                }
+
+                //gridItem.transform.localScale = new Vector3(1, 0.1f, 1);
+                //gridItem.Grid_I = i;
+                //gridItem.Grid_J = j;
+                //gridItem.IsWall = false;
+                //gridItem.IsRoad = true;
+                //gridItem.transform.tag = "Road";
+                //GridItemArray[i, j] = gridItem;
+
+                //if (i == 0 || i == 9 || j == 0 || j == 9)
+                //{
+                //    gridItem.IsWall = true;
+                //    gridItem.IsRoad = false;
+                //    gridItem.transform.tag = "Wall";
+                //    gridItem.transform.localScale = new Vector3(1, 0.5f, 1);
+                //    gridItem.GetComponent<MeshRenderer>().material = M_Level.I.WallMat;
+                //}
             }
         }
+    }
+    void GridSetting(Ball currentBall, int turnSay)
+    {
+        bool a = false, b = false, c = true, d = true;
+        int countSay = 0;
+        int sayýtest = 0;
+        while (turnSay > countSay)
+        {
+            sayýtest++;
+
+            int _i = currentBall.Index_I;
+            int _j = currentBall.Index_J;
+
+
+            int count = Random.Range(1, 4);
+            int direction = Random.Range(1, 5);
+            print("qwe  " + " count : " + count + "  //  direction : " + direction);
+
+            switch (direction)
+            {
+                case 1://up  
+                    print("case1 " + a + "  j +  : " + (_j)); if (a || _j + count >= Grid_J - 1) break;
+
+                    for (int i = 0; i <= count; i++)
+                    {
+                        SetRoad(GridItemArray[_i, _j + i]);
+                        print("1 = " + "  count : " + count + " //  grid  i : " + _i + "  //  grid j : " + (_j + i) + "  // direction : " + direction);
+                    }
+                    a = false; b = false; c = true; d = false; countSay++; currentBall.Index_J += count;
+                    break;
+
+                case 2://right
+                    print("case2 " + b + "  i +  : " + (_i)); if (b || _i + count >= Grid_I - 1) break;
+
+                    for (int i = 0; i <= count; i++)
+                    {
+                        SetRoad(GridItemArray[_i + i, _j]);
+                        print("1 = " + "  count : " + count + " //  grid  i : " + (_i + i) + "  //  grid j : " + _j + "  // direction : " + direction);
+                    }
+                    a = false; b = false; c = false; d = true; countSay++; currentBall.Index_I += count;
+                    break;
+
+                case 3://down
+                    print("case3 " + c + "  j- : " + (_j)); if (c || _j - count <= 0) break;
+
+                    for (int i = 0; i <= count; i++)
+                    {
+                        SetRoad(GridItemArray[_i, _j - i]);
+                        print("1 = " + "  count : " + count + " //  grid  i : " + _i + "  //  grid j : " + (_j - i) + "  // direction : " + direction);
+                    }
+                    a = true; b = false; c = false; d = false; countSay++; currentBall.Index_J -= count;
+                    break;
+
+                case 4://left
+                    print("case4 " + d + "  i- : " + (_i)); if (d || _i - count <= 0) break;
+
+                    for (int i = 0; i <= count; i++)
+                    {
+                        SetRoad(GridItemArray[_i - i, _j]);
+                        print("1 = " + "  count : " + count + " //  grid  i : " + (_i - i) + "  //  grid j : " + _j + "  // direction : " + direction);
+                    }
+                    a = false; b = true; c = false; d = false; countSay++; currentBall.Index_I -= count;
+                    break;
+
+
+            }
+
+        }
+
+        //for (int j = 0; j < turnSay; j++)
+        //{
+        //    print("qwe");
+        //    int _i = currentBall.Index_I;
+        //    int _j = currentBall.Index_J;
+
+
+        //    int count = Random.Range(1, 8);
+        //    int direction = Random.Range(1, 5);
+
+        //    switch (direction)
+        //    {
+        //        case 1://up   
+        //            if (a) break;
+        //            for (int i = 0; i < count; i++)
+        //            {
+        //                if (_j + i < Grid_J - 1)
+        //                {
+        //                    GridItemArray[_i, _j + i].IsRoad = true;
+        //                    GridItemArray[_i, _j + i].transform.tag = "Road";
+        //                    GridItemArray[_i, _j + i].IsWall = false;
+        //                    GridItemArray[_i, _j + i].transform.localScale = new Vector3(1, 0.1f, 1);
+        //                    GridItemArray[_i, _j + i].GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+        //                    currentBall.Index_J = _j + i;
+        //                }
+        //            }
+        //            a = false; b = false; c = true; d = false;
+        //            break;
+
+        //        case 2://right
+        //            if (b) break;
+
+        //            for (int i = 0; i < count; i++)
+        //            {
+        //                if (_i + i < Grid_I - 1)
+        //                {
+        //                    GridItemArray[_i + i, _j].IsRoad = true;
+        //                    GridItemArray[_i + i, _j].transform.tag = "Road";
+        //                    GridItemArray[_i + i, _j].IsWall = false;
+        //                    GridItemArray[_i + i, _j].transform.localScale = new Vector3(1, 0.1f, 1);
+        //                    GridItemArray[_i + i, _j].GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+
+        //                    currentBall.Index_I = _i + i;
+
+        //                }
+        //            }
+        //            a = false; b = false; c = false; d = true;
+
+        //            break;
+        //        case 3://down
+        //            if (c) break;
+
+        //            for (int i = 0; i < count; i++)
+        //            {
+        //                if (_j - i > 0)
+        //                {
+        //                    GridItemArray[_i, _j - i].IsRoad = true;
+        //                    GridItemArray[_i, _j - i].transform.tag = "Road";
+        //                    GridItemArray[_i, _j - i].IsWall = false;
+        //                    GridItemArray[_i, _j - i].transform.localScale = new Vector3(1, 0.1f, 1);
+        //                    GridItemArray[_i, _j - i].GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+
+        //                    currentBall.Index_J = _j - i;
+
+
+        //                }
+
+        //            }
+        //            a = true; b = false; c = false; d = false;
+
+        //            break;
+
+        //        case 4://left
+        //            if (d) break;
+
+        //            for (int i = 0; i < count; i++)
+        //            {
+        //                if (_i - i > 0)
+        //                {
+        //                    GridItemArray[_i - i, _j].IsRoad = true;
+        //                    GridItemArray[_i - i, _j].transform.tag = "Road";
+        //                    GridItemArray[_i - i, _j].IsWall = false;
+        //                    GridItemArray[_i - i, _j].transform.localScale = new Vector3(1, 0.1f, 1);
+        //                    GridItemArray[_i - i, _j].GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+
+        //                    currentBall.Index_I = _i - i;
+
+        //                }
+
+        //            }
+        //            a = false; b = true; c = false; d = false;
+
+        //            break;
+
+        //    }
+
+        //}
+    }
+
+    void SetRoad(GridItem gridItem)
+    {
+        gridItem.IsRoad = true;
+        gridItem.transform.tag = "Road";
+        gridItem.IsWall = false;
+        gridItem.transform.localScale = new Vector3(1, 0.1f, 1);
+        gridItem.GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+
     }
 
     void SetGrid()

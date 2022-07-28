@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RestartButton : MonoBehaviour
@@ -20,6 +21,7 @@ public class RestartButton : MonoBehaviour
     }
     void ButtonClicked()
     {
-        M_Observer.OnGameRetry?.Invoke();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        // M_Observer.OnGameRetry?.Invoke();
     }
 }
