@@ -46,7 +46,7 @@ public class Level : MonoBehaviour
         CreateGrid();
         M_Level.I.CurrentBall.transform.SetParent(GridItemArray[1, 1].transform);
         CurrentBall = M_Level.I.CurrentBall;
-        GridSetting(CurrentBall, 30);
+        GridSetting(CurrentBall, 10);
         CurrentBall.Index_I = 1;
         CurrentBall.Index_J = 1;
         CurrentBall.transform.localScale = new Vector3(1, 10, 1);
@@ -147,7 +147,8 @@ public class Level : MonoBehaviour
                         else if (!GridItemArray[_i + i, _j].IsRoad) break;
                     }
                 }
-                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; });
+                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; testtw.Kill(); CurrentBall.transform.DOScaleX(1, 0.1f).SetEase(Ease.Flash); });
+                testtw = CurrentBall.transform.DOScaleX(1.5f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() => CurrentBall.transform.DOScaleX(1, 0.1f).SetEase(Ease.Flash));
 
             }
             else if (_kontrolhýzýX < -_katsayý)
@@ -166,7 +167,9 @@ public class Level : MonoBehaviour
                         else if (!GridItemArray[_i - i, _j].IsRoad) break;
                     }
                 }
-                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; });
+                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; testtw.Kill(); CurrentBall.transform.DOScaleX(1, 0.1f).SetEase(Ease.Flash); });
+                testtw = CurrentBall.transform.DOScaleX(1.5f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() => CurrentBall.transform.DOScaleX(1, 0.1f).SetEase(Ease.Flash));
+
 
 
             }
@@ -186,7 +189,9 @@ public class Level : MonoBehaviour
                         else if (!GridItemArray[_i, _j + i].IsRoad) break;
                     }
                 }
-                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; });
+                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; testtw.Kill(); CurrentBall.transform.DOScaleZ(1, 0.1f).SetEase(Ease.Flash); });
+                testtw = CurrentBall.transform.DOScaleZ(1.5f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() => CurrentBall.transform.DOScaleZ(1, 0.1f).SetEase(Ease.Flash));
+
 
             }
             else if (_kontrolhýzýY < -_katsayý)
@@ -206,7 +211,9 @@ public class Level : MonoBehaviour
                     }
                 }
 
-                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; });
+                CurrentBall.transform.DOLocalMove(movePos, Speed).SetSpeedBased().SetEase(Ease.Flash).OnComplete(() => { IsMove = false; testtw.Kill(); CurrentBall.transform.DOScaleZ(1, 0.1f).SetEase(Ease.Flash); });
+                testtw = CurrentBall.transform.DOScaleZ(1.5f, 0.25f).SetEase(Ease.OutExpo).OnComplete(() => CurrentBall.transform.DOScaleZ(1, 0.1f).SetEase(Ease.Flash));
+
 
 
             }
@@ -214,7 +221,7 @@ public class Level : MonoBehaviour
 
         }
     }
-
+    Tween testtw;
     void CreateGrid()
     {
         for (int j = 0; j < Grid_J; j++)
@@ -247,65 +254,202 @@ public class Level : MonoBehaviour
     }
     void GridSetting(Ball currentBall, int turnSay)
     {
-        bool a = false, b = false, c = true, d = true;
+        bool a = true, b = true, c = false, d = false;
         int countSay = 0;
         int sayýtest = 0;
         while (turnSay > countSay)
         {
+
             sayýtest++;
 
             int _i = currentBall.Index_I;
             int _j = currentBall.Index_J;
 
 
-            int count = Random.Range(1, 4);
+            int count = Random.Range(2, 5);
             int direction = Random.Range(1, 5);
-
+            print("go // direction : " + direction + "   //  count :  " + count);
             switch (direction)
             {
                 case 1://up  
-                    if (a || _j + count >= Grid_J - 1) break;
+                    print("case 1   a : " + a + "  // _i : " + _i + " // _j : " + _j + " // count : " + count + "  // j +1 yol mu ");
 
-                    for (int i = 0; i <= count; i++)
+                    if (!a || _j + count >= Grid_J - 1) break;
+
+                    if (GridItemArray[_i, _j + 1].IsRoad)
                     {
-                        SetRoad(GridItemArray[_i, _j + i]);
+                        print("yol");
+
+                        int _q = roading(count, _i, _j);
+                        currentBall.Index_J += _q;
                     }
-                    a = false; b = false; c = true; d = false; countSay++; currentBall.Index_J += count;
+                    else
+                    {
+                        for (int i = 0; i <= count; i++)
+                        {
+                            print("blob");
+                            if (GridItemArray[_i, _j + i].IsRoad && i != 0)
+                            {
+                                int _q = roading(count, _i, _j);
+                                count = _q; print("yol_cýktý");
+
+                            }
+                            else
+                            {
+                                SetRoad(GridItemArray[_i, _j + i]);
+                                print("devamke");
+
+                            }
+                        }
+                        currentBall.Index_J += count;
+                    }
+                    a = false; b = true; c = false; d = true;
+
+                    countSay++;
+
                     break;
 
                 case 2://right
-                    if (b || _i + count >= Grid_I - 1) break;
+                    print("case 2   b : " + b + "  // _i : " + _i + " // _j : " + _j + " // count : " + count + "  // i +1 yol mu ");
 
-                    for (int i = 0; i <= count; i++)
+                    if (!b || _i + count >= Grid_I - 1) break;
+
+                    if (GridItemArray[_i + 1, _j].IsRoad)
                     {
-                        SetRoad(GridItemArray[_i + i, _j]);
+                        print("yol");
+                        int _q = roading(count, _i, _j);
+
+                        currentBall.Index_I += _q;
                     }
-                    a = false; b = false; c = false; d = true; countSay++; currentBall.Index_I += count;
+                    else
+                    {
+                        for (int i = 0; i <= count; i++)
+                        {
+                            print("blob");
+                            if (GridItemArray[_i + i, _j].IsRoad && i != 0)
+                            {
+                                int _q = roading(count, _i, _j);
+                                count = _q; print("yol_cýktý");
+
+                            }
+                            else
+                            {
+                                SetRoad(GridItemArray[_i + i, _j]);
+                                print("devamke");
+
+                            }
+                        }
+                        currentBall.Index_I += count;
+
+                    }
+
+                    a = true; b = false; c = true; d = false;
+
+                    countSay++;
+
                     break;
 
                 case 3://down
-                    if (c || _j - count <= 0) break;
+                    print("case 3   c : " + c + "  // _i : " + _i + " // _j : " + _j + " // count : " + count + "  // j -1 yol mu ");
 
-                    for (int i = 0; i <= count; i++)
+                    if (!c || _j - count <= 0) break;
+                    if (GridItemArray[_i, _j - 1].IsRoad)
                     {
-                        SetRoad(GridItemArray[_i, _j - i]);
+                        print("yol");
+
+                        int _q = roading(count, _i, _j);
+
+                        currentBall.Index_J -= _q;
                     }
-                    a = true; b = false; c = false; d = false; countSay++; currentBall.Index_J -= count;
+                    else
+                    {
+                        for (int i = 0; i <= count; i++)
+                        {
+                            print("blob");
+                            if (GridItemArray[_i, _j - i].IsRoad && i != 0)
+                            {
+                                int _q = roading(count, _i, _j);
+                                count = _q; print("yol_cýktý");
+
+                            }
+                            else
+                            {
+                                SetRoad(GridItemArray[_i, _j - i]);
+                                print("devamke");
+
+                            }
+                        }
+                        currentBall.Index_J -= count;
+                    }
+
+                    a = false; b = true; c = false; d = true;
+
+                    countSay++;
+
                     break;
 
                 case 4://left
-                    if (d || _i - count <= 0) break;
+                    print("case 4   d : " + d + "  // _i : " + _i + " // _j : " + _j + " // count : " + count + "  // i -1 yol mu ");
 
-                    for (int i = 0; i <= count; i++)
+                    if (!d || _i - count <= 0) break;
+                    if (GridItemArray[_i - 1, _j].IsRoad)
                     {
-                        SetRoad(GridItemArray[_i - i, _j]);
+                        print("yol");
+
+                        int _q = roading(count, _i, _j);
+
+                        currentBall.Index_I -= _q;
                     }
-                    a = false; b = true; c = false; d = false; countSay++; currentBall.Index_I -= count;
+                    else
+                    {
+                        for (int i = 0; i <= count; i++)
+                        {
+                            print("blob");
+                            if (GridItemArray[_i - i, _j].IsRoad && i != 0)
+                            {
+                                int _q = roading(count, _i, _j);
+                                count = _q; print("yol_cýktý");
+
+                            }
+                            else
+                            {
+                                print("devamke");
+
+                                SetRoad(GridItemArray[_i - i, _j]);
+                            }
+
+                        }
+                        currentBall.Index_I -= count;
+                    }
+
+                    a = true; b = false; c = true; d = false;
+
+                    countSay++;
+
                     break;
             }
+
+            if (currentBall.Index_I == 1) d = false;
+            if (currentBall.Index_I == 8) b = false;
+            if (currentBall.Index_J == 1) c = false;
+            if (currentBall.Index_J == 8) a = false;
+
+
+
+
+
         }
     }
-
+    int roading(int count, int _i, int _j)
+    {
+        int _q = 1;
+        while (GridItemArray[_i, _j + _q].IsRoad)
+        {
+            if (_q == count) break;
+            _q++;
+        }
+        return _q;
+    }
     void SetRoad(GridItem gridItem)
     {
         gridItem.IsRoad = true;

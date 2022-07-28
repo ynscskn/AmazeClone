@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3913888124344990254}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Index_I: 0
   Index_J: 0
+  BallMat: {fileID: 0}
 --- !u!135 &7918920898479421774
 SphereCollider:
   m_ObjectHideFlags: 0
