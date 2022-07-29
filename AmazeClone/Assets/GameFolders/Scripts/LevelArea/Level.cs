@@ -254,7 +254,7 @@ public class Level : MonoBehaviour
     }
     void GridSetting(Ball currentBall, int turnSay)
     {
-        bool a = true, b = true, c = false, d = false;
+        bool a = true, b = true, c = false, d = false, colon = false;
         int countSay = 0;
         int sayýtest = 0;
         while (turnSay > countSay)
@@ -272,16 +272,27 @@ public class Level : MonoBehaviour
 
                     if (!a || _j + count >= Grid_J - 1) break;
 
-                    if (GridItemArray[_i, _j + 1].IsRoad) currentBall.Index_J += roading(count, _i, _j);
-                    else
+
+                    for (int i = 0; i <= count; i++)
                     {
-                        for (int i = 0; i <= count; i++)
-                        {
-                            if (GridItemArray[_i, _j + i].IsRoad && i != 0) count = roading(count, _i, _j);
-                            else SetRoad(GridItemArray[_i, _j + i]);
-                        }
-                        currentBall.Index_J += count;
+                        if (GridItemArray[_i, _j + i].IsColon) { count = i - 1; break; }
+                        else SetRoad(GridItemArray[_i, _j + i]);
                     }
+                    if (GridItemArray[_i, _j + count + 1].IsRoad)
+                    {
+                        while (GridItemArray[_i, _j + count].IsRoad)
+                        {
+                            if (_j + count + 1 >= Grid_J - 1) break;
+
+                            count++;
+                        }
+                    }
+
+                    currentBall.Index_J += count;
+                    IsColon(GridItemArray[_i, _j + count + 1]);
+
+
+
                     a = false; b = true; c = false; d = true; countSay++;
                     break;
 
@@ -289,16 +300,27 @@ public class Level : MonoBehaviour
 
                     if (!b || _i + count >= Grid_I - 1) break;
 
-                    if (GridItemArray[_i + 1, _j].IsRoad) currentBall.Index_I += roading(count, _i, _j);
-                    else
+
+                    for (int i = 0; i <= count; i++)
                     {
-                        for (int i = 0; i <= count; i++)
-                        {
-                            if (GridItemArray[_i + i, _j].IsRoad && i != 0) count = roading(count, _i, _j);
-                            else SetRoad(GridItemArray[_i + i, _j]);
-                        }
-                        currentBall.Index_I += count;
+                        if (GridItemArray[_i + i, _j].IsColon) { count = i - 1; break; }
+                        else SetRoad(GridItemArray[_i + i, _j]);
                     }
+                    if (GridItemArray[_i + count + 1, _j].IsRoad)
+                    {
+                        while (GridItemArray[_i + count, _j].IsRoad)
+                        {
+                            if (_i + count + 1 >= Grid_I - 1) break;
+
+                            count++;
+                        }
+                    }
+
+
+                    currentBall.Index_I += count;
+                    IsColon(GridItemArray[_i + count + 1, _j]);
+
+
                     a = true; b = false; c = true; d = false; countSay++;
                     break;
 
@@ -306,16 +328,23 @@ public class Level : MonoBehaviour
 
                     if (!c || _j - count <= 0) break;
 
-                    if (GridItemArray[_i, _j - 1].IsRoad) currentBall.Index_J -= roading(count, _i, _j);
-                    else
+                    for (int i = 0; i <= count; i++)
                     {
-                        for (int i = 0; i <= count; i++)
-                        {
-                            if (GridItemArray[_i, _j - i].IsRoad && i != 0) count = roading(count, _i, _j);
-                            else SetRoad(GridItemArray[_i, _j - i]);
-                        }
-                        currentBall.Index_J -= count;
+                        if (GridItemArray[_i, _j - i].IsColon) { count = i - 1; break; }
+                        else SetRoad(GridItemArray[_i, _j - i]);
                     }
+                    if (GridItemArray[_i, _j - count - 1].IsRoad)
+                    {
+                        while (GridItemArray[_i, _j - count].IsRoad)
+                        {
+                            if (_j - count - 1 <= 0) break;
+
+                            count++;
+                        }
+                    }
+                    currentBall.Index_J -= count;
+                    IsColon(GridItemArray[_i, _j - count - 1]);
+
                     a = false; b = true; c = false; d = true; countSay++;
                     break;
 
@@ -323,16 +352,23 @@ public class Level : MonoBehaviour
 
                     if (!d || _i - count <= 0) break;
 
-                    if (GridItemArray[_i - 1, _j].IsRoad) currentBall.Index_I -= roading(count, _i, _j);
-                    else
+                    for (int i = 0; i <= count; i++)
                     {
-                        for (int i = 0; i <= count; i++)
-                        {
-                            if (GridItemArray[_i - i, _j].IsRoad && i != 0) count = roading(count, _i, _j);
-                            else SetRoad(GridItemArray[_i - i, _j]);
-                        }
-                        currentBall.Index_I -= count;
+                        if (GridItemArray[_i - i, _j].IsColon) { count = i - 1; break; }
+                        else SetRoad(GridItemArray[_i - i, _j]);
                     }
+                    if (GridItemArray[_i - count - 1, _j].IsRoad)
+                    {
+                        while (GridItemArray[_i - count, _j].IsRoad)
+                        {
+                            if (_i - count - 1 <= 0) break;
+
+                            count++;
+                        }
+                    }
+                    currentBall.Index_I -= count;
+                    IsColon(GridItemArray[_i - count - 1, _j]);
+
                     a = true; b = false; c = true; d = false; countSay++;
                     break;
             }
@@ -359,5 +395,12 @@ public class Level : MonoBehaviour
         gridItem.IsWall = false;
         gridItem.transform.localScale = new Vector3(1, 0.1f, 1);
         gridItem.GetComponent<MeshRenderer>().material = M_Level.I.RoadMat;
+    }
+    void IsColon(GridItem gridItem)
+    {
+        if (gridItem.IsColon) return;
+        gridItem.IsColon = true;
+        gridItem.transform.tag = "Colon";
+        gridItem.GetComponent<MeshRenderer>().material.color = Color.red;
     }
 }

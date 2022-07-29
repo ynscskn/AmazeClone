@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GridItem : MonoBehaviour
 {
-    [HideInInspector] public int Grid_I,Grid_J;
-    public bool IsWall, IsRoad, IsPainted;
+    [HideInInspector] public int Grid_I, Grid_J;
+    public bool IsWall, IsRoad, IsPainted, IsColon;
     public SphereCollider Collider;
-   
-    
+
+
 }
